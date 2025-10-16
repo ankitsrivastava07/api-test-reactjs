@@ -1,35 +1,71 @@
+import { useEffect, useState } from 'react'
 import './css/ApiFormComponent.css'
+import axios from 'axios';
+
 export default function ApiFormComponent() {
+    const [selectedMethod, setSelectedMethod] = useState("");
+    const [apiResponse, setApiResponse] = useState();
+
+    const handleSubmitEvent = async (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        console.log(formData);
+        const api = formData.get("api");
+
+        const data = {
+            methodType: selectedMethod,
+            uri: api,
+            requestBody: formData.get("payload")
+        };
+
+        const res = await axios.post('https://p661i8bidb.execute-api.ap-south-1.amazonaws.com/dev/apiTestApp', data);
+        setApiResponse(JSON.stringify(res.data , null , 2));
+    };
+
+    function handleChange(event) {
+        setSelectedMethod(event.target.value);
+    }
+
+    useEffect(() => {
+        console.log("Selected Method: ", selectedMethod);
+    }, [selectedMethod])
+
+    useEffect(() => {
+        console.log("API Response: ", apiResponse);
+    }, [apiResponse]);
 
     return (
         <>
-            <form action={ }>
+            <form onSubmit={handleSubmitEvent}>
                 <div className="row justify-content-center mb-3 margin-top">
-                    <div className="col-md-6 ">
+                    <div className="col-md-6">
                         <label className="form-label">Enter your API here</label>
                         <input
-                            type="text"
+                            type="text" name="api"
                             className="form-control"
                             id="firstName"
                             placeholder="Enter your API here Ex. https://google.com"
                         />
-                    </div>666
+                    </div>
                 </div>
 
-                <div className="nav-item dropdown row justify-content-center mb-3 ">
-                    <label htmlFor="exampleFormControlTextarea1" className="form-label nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Method
+                <div className="nav-item dropdown row justify-content-center mb-3 " name="method">
+                    <label htmlFor="exampleFormControlTextarea1" >
+                        Method :
                     </label>
 
-                    <div className="dropdown-menu " aria-labelledby="navbarDropdown">
-                        <a className="dropdown-item" href="/">Get</a>
-                        <a className="dropdown-item" href="/">Post</a>
-                        <a className="dropdown-item" href="/">Patch</a>
-                        <a className="dropdown-item" href="/">Put</a>
-                        <a className="dropdown-item" href="/">Delete</a>
-                        <a className="dropdown-item" href="/">Options</a>
-                        <a className="dropdown-item" href="/">Head</a>
-                    </div>
+                    <select value={selectedMethod} onChange={handleChange} name="method">
+                        <option value="">-- Select Method --</option>
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="PATCH">PATCH</option>
+                        <option value="DELETE">DELETE</option>
+                        <option value="HEAD">HEAD</option>
+                        <option value="OPTIONS">OPTIONS</option>
+                    </select>
+
                 </div>
 
                 <div className="row justify-content-center mb-3">
@@ -37,7 +73,7 @@ export default function ApiFormComponent() {
                         <label htmlFor="exampleFormControlTextarea1" className="form-label">
                             Payload
                         </label>
-                        <textarea
+                        <textarea name="payload"
                             className="form-control"
                             id="exampleFormControlTextarea1"
                             rows="8"
@@ -55,11 +91,13 @@ export default function ApiFormComponent() {
                         <label htmlFor="exampleFormControlTextarea1" className="form-label">
                             Api Response
                         </label>
-                        <textarea
+                        <pre
                             className="form-control"
-                            id="exampleFormControlTextarea1"
+                            id="hght"
                             rows="8"
-                        ></textarea>
+                        >
+                            {apiResponse}
+                        </pre>
                     </div>
                 </div>
 
@@ -68,28 +106,29 @@ export default function ApiFormComponent() {
                         <label htmlFor="exampleFormControlTextarea1" className="form-label">
                             Api Detail
                         </label>
-                        <textarea
+                        <pre
                             className="form-control"
-                            id="exampleFormControlTextarea1"
+                            id="hght"
                             rows="8"
-                        ></textarea>
+                        >
+                            {apiResponse}
+                        </pre>
                     </div>
                 </div>
 
                 <div className="row justify-content-center mb-3">
                     <div className="col-md-6">
                         <label htmlFor="exampleFormControlTextarea1" className="form-label">
-                            Execution Time:-
+                            Execution Time :- N/A
                         </label>
                     </div>
                 </div>
                 <div className="row justify-content-center mb-3">
                     <div className="col-md-6">
-                        <button type="button" class="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary">Submit</button>
                     </div>
                 </div>
             </form>
         </>
     )
-
 }
