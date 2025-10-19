@@ -1,14 +1,16 @@
 export default function Contact() {
     return (
         <>
-            <div className="container mt-4">
-                <div className="row">
-                    <div className="col-md-12">
-                        <h1 className="mb-4">Contact Us</h1>
-                        <p className="lead">This is the contact page of our simple React application.</p>
+            <div className="container margin-top mb-5">
+                <div className="row justify-content-center">
+                    <div className="col-md-6 text-center">
+                        <h2>Contact Us</h2>
+                        <p>If you have any questions, feel free to reach out to us at:</p>
+                        <p>Email: contact@domain.com</p>         
+                        <p>Phone: +1 (123) 456-7890</p>
                     </div>
                 </div>
-            </div>
+            </div>      
         </>
     );
 }

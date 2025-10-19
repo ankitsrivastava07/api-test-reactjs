@@ -20,7 +20,7 @@ export default function ApiFormComponent() {
         };
 
         const res = await axios.post('https://p661i8bidb.execute-api.ap-south-1.amazonaws.com/dev/apiTestApp', data);
-        setApiResponse(JSON.stringify(res.data , null , 2));
+        setApiResponse(JSON.stringify(res.data, null, 2));
     };
 
     function handleChange(event) {
@@ -96,7 +96,43 @@ export default function ApiFormComponent() {
                             id="hght"
                             rows="8"
                         >
-                            {apiResponse}
+                            <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                {(() => {
+                                    // Guard clause: handle no data
+                                    if (!apiResponse || apiResponse === 'undefined') {
+                                        return 'No response yet';
+                                    }
+
+                                    let parsed = null;
+
+                                    // Only parse if it's a valid JSON string
+                                    if (typeof apiResponse === 'string') {
+                                        if (
+                                            apiResponse.trim().startsWith('{') &&
+                                            apiResponse.trim().endsWith('}')
+                                        ) {
+                                            try {
+                                                parsed = JSON.parse(apiResponse);
+                                            } catch (e) {
+                                                return `Invalid JSON: ${e.message}`;
+                                            }
+                                        } else {
+                                            return 'Invalid JSON format';
+                                        }
+                                    } else {
+                                        parsed = apiResponse; // already a JS object
+                                    }
+
+                                    // Final safe render
+                                    const responseText = parsed?.responseText;
+                                    if (!responseText) return 'No Data Found';
+
+                                    return responseText
+                                        .replace(/, /g, '\n')
+                                        .replace(/=/g, ': ');
+                                })()}
+                            </pre>
+
                         </pre>
                     </div>
                 </div>
@@ -110,8 +146,43 @@ export default function ApiFormComponent() {
                             className="form-control"
                             id="hght"
                             rows="8"
-                        >
-                            {apiResponse}
+                            style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}                        >
+
+                            {(() => {
+                                // Guard clause: handle no data
+                                if (!apiResponse || apiResponse === 'undefined') {
+                                    return 'No response yet';
+                                }
+
+                                let parsed = null;
+
+                                // Only parse if it's a valid JSON string
+                                if (typeof apiResponse === 'string') {
+                                    if (
+                                        apiResponse.trim().startsWith('{') &&
+                                        apiResponse.trim().endsWith('}')
+                                    ) {
+                                        try {
+                                            parsed = JSON.parse(apiResponse);
+                                        } catch (e) {
+                                            return `Invalid JSON: ${e.message}`;
+                                        }
+                                    } else {
+                                        return 'Invalid JSON format';
+                                    }
+                                } else {
+                                    parsed = apiResponse; // already a JS object
+                                }
+
+                                // Final safe render
+                                const responseHeader = parsed?.responseHeader;
+                                if (!responseHeader) return apiResponse;
+
+                                return responseHeader
+                                    .replace(/, /g, '\n')
+                                    .replace(/=/g, ': ');
+                            })()}
+
                         </pre>
                     </div>
                 </div>
@@ -119,7 +190,7 @@ export default function ApiFormComponent() {
                 <div className="row justify-content-center mb-3">
                     <div className="col-md-6">
                         <label htmlFor="exampleFormControlTextarea1" className="form-label">
-                            Execution Time :- N/A
+                            Execution Time :- {apiResponse && JSON.parse(apiResponse).executionTime}
                         </label>
                     </div>
                 </div>
